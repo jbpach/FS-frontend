@@ -1,31 +1,9 @@
 import { useState } from "react"
-import Set from "./Set"
+import WorkoutForm from "./components/WorkoutForm";
 
 const App = () => {
 
-    const [workout, setWorkout] = useState([
-        {
-            id: 0, 
-            name: 'Bench Press', 
-            sets: [
-                {id: 0, weight: 0, reps: 0}
-            ]
-        }, 
-        // {
-        //     id: 1, 
-        //     name: 'Dead Lift', 
-        //     sets: [
-        //         {id: 0, weight: 0, reps: 0}
-        //     ]
-        // },
-        // {
-        //     id: 2, 
-        //     name: 'Squat', 
-        //     sets: [
-        //         {id: 0, weight: 0, reps: 0}
-        //     ]
-        // },
-    ])
+    const [workout, setWorkout] = useState([])
 
     useState(() => {
         const workout = window.localStorage.getItem('WorkOut')
@@ -73,6 +51,10 @@ const App = () => {
         setWorkout(workout.map(ex => ex.id === parentId ? currWorkout : ex))
     }
 
+    const addWorkOut = () => {
+        console.log('clicked')
+    }
+
     const addExercise = () => {
         let exerciseId = workout.length ? workout[workout.length - 1].id + 1 : 0 
         // Before adding exercise prompt the user to either select or input the exercise name
@@ -96,32 +78,14 @@ const App = () => {
     }
 
     const saveWorkOut = (e) => {
-        
         e.preventDefault()
-        window.localStorage.setItem('WorkOut', JSON.stringify(workout)) 
+        // window.localStorage.setItem('WorkOut', JSON.stringify(workout)) 
+        console.log(workout)
     }
 
     return (
         <div>
-            <h1>FitnessLogger</h1>
-            <form onSubmit={saveWorkOut}>
-                {workout.map((ex) => (
-                    <div key={ex.id}>
-                        <h2>{ex.name} <button type="button" onClick={() => deleteExercise(ex.id)}>Delete Exercise</button></h2> 
-                        {ex.sets.map((set, index) => (
-                            <Set key={set.id} index={index} removeSet={() => removeSet(ex.id, set.id)} weight={set.weight}  reps={set.reps}handleWeightChange={(e) => handleWeightChange(e, ex.id, set.id)} handleRepsChange={(e) => handleRepsChange(e, ex.id, set.id)} />
-                        ))}
-                        <button type="button" onClick={() => addSet(ex.id)}>+ set</button>
-                    </div>
-                ))}
-                <br/>
-                <button type="button" onClick={addExercise}>+ Exercise</button>
-                <br/>
-                <br/>
-                <button type="submit">Save Workout</button>
-                <button>Delete Workout</button>
-            </form>
-                
+            <WorkoutForm workout={workout} addExercise={addExercise} addSet={addSet} removeSet={removeSet} handleWeightChange={handleWeightChange} handleRepsChange={handleRepsChange} />   
         </div>        
     )
 }
