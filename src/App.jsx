@@ -1,91 +1,116 @@
 import { useState } from "react"
 import WorkoutForm from "./components/WorkoutForm";
+import workoutService from "./services/workout";
+import WorkoutCard from "./components/WorkoutCard";
+import Button from "./components/Button";
+import { FaPlus } from "react-icons/fa6";
 
 const App = () => {
-
-    const [workout, setWorkout] = useState([])
+    const [newWorkout, setNewWorkout] = useState(null)
+    const [workouts, setWorkouts] = useState([])
 
     useState(() => {
-        const workout = window.localStorage.getItem('WorkOut')
-        if (workout) {
-            setWorkout(JSON.parse(workout))
+        const fetchWorkouts = async () => {
+            const workouts = await workoutService.getWorkouts()
+            setWorkouts(workouts)
         }
+        fetchWorkouts()
     }, [])
 
-
-    const addSet = (id) => {
-        let currWorkout = workout.find(ex => ex.id === id)
-        let currSet = currWorkout.sets
-        let setId = currSet.length ? currSet[currSet.length - 1].id + 1 : 0
-        let newSet = {id: setId, weight: 0, reps: 0}
-        currSet = currSet.concat(newSet)
-        currWorkout = {...currWorkout, sets: currSet}
-        setWorkout(workout.map(ex => ex.id === id ? currWorkout : ex))
-    }
-
-    const removeSet = (parentId, childId) => {
-        let currWorkout = workout.find(ex => ex.id === parentId)
-        let currSet = currWorkout.sets
-        if (currSet.length === 1) {
-            setWorkout(workout.filter(ex => ex.id !== parentId))
-            return;
+    const createWorkout = async () => {
+        const workoutObject = {
+            "title": "New workout"
         }
-        currSet = currSet.filter((set) => set.id !== childId)
-        currWorkout = {...currWorkout, sets: currSet}
-        setWorkout(workout.map(ex => ex.id === parentId ? currWorkout : ex))
+        const response = await workoutService.createWorkout(workoutObject)
+        setNewWorkout(response)
     }
 
-    const handleWeightChange = (e, parentId, childId) => {
-        let currWorkout = workout.find(ex => ex.id === parentId)
-        let currSet = currWorkout.sets
-        currSet = currSet.map(set => set.id === childId ? { ...set, weight: e.target.value } : set)
-        currWorkout = {...currWorkout, sets: currSet}
-        setWorkout(workout.map(ex => ex.id === parentId ? currWorkout : ex))
-    }
-
-    const handleRepsChange = (e, parentId, childId) => {
-        let currWorkout = workout.find(ex => ex.id === parentId)
-        let currSet = currWorkout.sets
-        currSet = currSet.map(set => set.id === childId ? { ...set, reps: e.target.value } : set)
-        currWorkout = {...currWorkout, sets: currSet}
-        setWorkout(workout.map(ex => ex.id === parentId ? currWorkout : ex))
-    }
-
-    const addWorkOut = () => {
-        console.log('clicked')
-    }
-
-    const addExercise = () => {
-        let exerciseId = workout.length ? workout[workout.length - 1].id + 1 : 0 
-        // Before adding exercise prompt the user to either select or input the exercise name
-        let response = window.prompt("Exercise Name?")
-        if (!response) {
+    const addExercise = async (id) => {
+        let promtRes = window.prompt("Exercise Name?")
+        if (!promtRes) {
             console.log("Need to input a value")
             return;
         }
-        let newExercise = {
-            id: exerciseId, 
-            name: response, 
-            sets: [
-                {id: 0, weight: 0, reps: 0}
-            ]
+        const exerciseObject = {
+            title: promtRes
         }
-        setWorkout(workout.concat(newExercise))
+        const response = await workoutService.addExercise(id, exerciseObject)
+        let currWorkout = {...newWorkout}
+        currWorkout.exercises = currWorkout.exercises.concat(response)
+        setNewWorkout(currWorkout)
     }
 
-    const deleteExercise = (id) => {
-        setWorkout(workout.filter(ex => ex.id !== id))
+    const removeExercise = async (id, exerciseid) => {
+        const requestObject = {
+            "_id": exerciseid
+        }
+        await workoutService.removeExercise(id, requestObject)
+        let currWorkout = {...newWorkout}
+        currWorkout.exercises = currWorkout.exercises.filter(ex => ex._id != exerciseid)
+        setNewWorkout(currWorkout)
     }
 
-    const saveWorkOut = (e) => {
+    const addSet = async (id, exerciseid) => {
+        const requestObject = {
+            "_id": exerciseid
+        }
+        const response = await workoutService.addSet(id, requestObject)
+        let currWorkout = {...newWorkout}
+        let currExercise = currWorkout.exercises.find(ex => ex._id == exerciseid)
+        currExercise.sets = currExercise.sets.concat(response)
+        setNewWorkout(currWorkout)
+    }
+
+    const removeSet = async (id, exerciseid, setid) => {
+        const requestObject = {
+            "_exerciseid": exerciseid,
+            "_setid": setid
+        }
+        await workoutService.removeSet(id, requestObject)
+        let currWorkout = {...newWorkout}
+        let currExercise = currWorkout.exercises.find(ex => ex._id == exerciseid)
+        currExercise.sets = currExercise.sets.filter(s => s._id != setid )
+        setNewWorkout(currWorkout)
+    }
+
+    const handleWeightChange = (e, parentId, childId) => {
+        let currWorkout = {...newWorkout}
+        let currExercise = currWorkout.exercises.find(ex => ex._id == parentId )
+        currExercise.sets = currExercise.sets.map(s => s._id == childId ? {...s, weight: e.target.value} : s)
+        setNewWorkout(currWorkout)
+    }
+
+    const handleRepChange = (e, parentId, childId) => {
+        let currWorkout = {...newWorkout}
+        let currExercise = currWorkout.exercises.find(ex => ex._id == parentId )
+        currExercise.sets = currExercise.sets.map(s => s._id == childId ? {...s, reps: e.target.value} : s)
+        setNewWorkout(currWorkout)
+    }
+    
+    const cancelWorkout = async (id) => {
+        await workoutService.cancelWorkout(id)
+        setNewWorkout(null)
+    }
+
+    const save = async (e, id) => {
         e.preventDefault()
-        // window.localStorage.setItem('WorkOut', JSON.stringify(workout)) 
-        console.log(workout)
+        let promtRes = window.prompt("Workout Name?")
+        let currWorkout = {...newWorkout, title: promtRes}
+        const response = await workoutService.Save(id, currWorkout)
+        setNewWorkout(null)
+        setWorkouts(workouts.concat(response))
     }
 
     return (
-        <div>
-            <WorkoutForm workout={workout} addExercise={addExercise} addSet={addSet} removeSet={removeSet} handleWeightChange={handleWeightChange} handleRepsChange={handleRepsChange} />   
+        <div className="flex flex-col gap-1 p-2">
+            {!newWorkout && <Button type='button' clickHandler={createWorkout} icon={<FaPlus />} label='Start workout'/> }
+            {newWorkout && (
+                <WorkoutForm workout={newWorkout} addExercise={addExercise} addSet={addSet} removeSet={removeSet} removeExercise={removeExercise} handleWeightChange={handleWeightChange} handleRepChange={handleRepChange} cancelWorkout={cancelWorkout} save={save}/>   
+            )}
+            <h2 className="text-white">Logged Workouts</h2>
+            {workouts.map(workout => (
+                <WorkoutCard key={workout._id} workout={workout} />
+            ))}
         </div>        
     )
 }
