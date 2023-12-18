@@ -1,12 +1,26 @@
 import Button from "../components/Button"
 import { FaPlus, FaAngleRight  } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import workoutService from "../services/workout"
+import { useEffect } from "react";
 
 const Home = () => {
     const navigate = useNavigate();
 
-    const handleNewWorkoutClick = () => {
-        navigate("/new")
+    useEffect(() => {
+        const id = localStorage.getItem("id")
+        if (id) {
+            navigate(`/new/${id}`)
+        }
+    })
+
+    const handleNewWorkoutClick = async () => {
+        const workoutObject = {
+            "title": "New workout"
+        }
+        const response = await workoutService.createWorkout(workoutObject)
+        localStorage.setItem("id", response._id)
+        navigate(`/new/${response._id}`)
     }
 
     const handleLogClick = () => {

@@ -1,37 +1,27 @@
 import { useEffect, useState } from "react";
 import workoutService from "../services/workout";
 import WorkoutForm from "../components/WorkoutForm";
-import ExerciseView from "../ExerciseView"
-import { useNavigate } from "react-router-dom";
+import ExerciseView from "../components/ExerciseView"
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 const NewWorkout = () => {
-    // make a note that we don't have to pass back the parent id since its the only one in state
-    // Make a note that an exercise should not created if there already exists an exercise with that name
-
     const navigate = useNavigate();
+    let { id } = useParams();
     const [newWorkout, setNewWorkout] = useState(null)
     const [viewExercises, setViewExercises] = useState(false)
 
-    const setExerciseString = (exercise) => {
-        setViewExercises(!viewExercises)
-        addExercise(exercise)
-    }
-
-    const setView = (id) => {
-        setViewExercises(!viewExercises)
-    }
-
     useEffect(() => {
         const createWorkout = async () => {
-            const workoutObject = {
-                "title": "New workout"
-            }
-            const response = await workoutService.createWorkout(workoutObject)
-            console.log("Hello")
-            setNewWorkout(response)
+            const response = await axios.get(`/api/workout/${id}`)
+            setNewWorkout(response.data)
         }
         createWorkout()
     }, [])
+
+    const handleExerciseView = () => {
+        setViewExercises(!viewExercises)
+    }
 
     const addExercise = async (exercise) => {
         const exerciseObject = {
@@ -39,10 +29,10 @@ const NewWorkout = () => {
         }
         const response = await workoutService.addExercise(newWorkout._id, exerciseObject)
         let currWorkout = { ...newWorkout }
-        console.log(currWorkout)
 
         currWorkout.exercises = currWorkout.exercises.concat(response)
         setNewWorkout(currWorkout)
+        setViewExercises(false)
     }
 
     const removeExercise = async (exerciseid) => {
@@ -94,6 +84,7 @@ const NewWorkout = () => {
 
     const cancelWorkout = async () => {
         await workoutService.cancelWorkout(newWorkout._id)
+        localStorage.clear()
         setNewWorkout(null)
         navigate('/')
     }
@@ -105,9 +96,8 @@ const NewWorkout = () => {
             return;
         }
         let currWorkout = { ...newWorkout, title: promtRes }
-        console.log(currWorkout)
         const response = await workoutService.Save(newWorkout._id, currWorkout)
-        console.log(response)
+        localStorage.clear()
         setNewWorkout(null)
         navigate('/')
     }
@@ -115,9 +105,9 @@ const NewWorkout = () => {
     return (
         (
             viewExercises ? (
-                <ExerciseView setExerciseString={setExerciseString} />
+                <ExerciseView handleExerciseView={handleExerciseView} addExercise={addExercise} />
             ) :
-            (newWorkout && (<WorkoutForm workout={newWorkout} setView={setView} addSet={addSet} removeSet={removeSet} removeExercise={removeExercise} handleWeightChange={handleWeightChange} handleRepChange={handleRepChange} cancelWorkout={cancelWorkout} save={save} />)) 
+            (newWorkout && (<WorkoutForm workout={newWorkout} handleExerciseView={handleExerciseView} addSet={addSet} removeSet={removeSet} removeExercise={removeExercise} handleWeightChange={handleWeightChange} handleRepChange={handleRepChange} cancelWorkout={cancelWorkout} save={save} />)) 
         )
     )
 }
