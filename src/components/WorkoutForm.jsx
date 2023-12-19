@@ -1,6 +1,6 @@
 import { FaCheck, FaXmark, FaPlus, FaTrash } from "react-icons/fa6";
 
-const WorkoutForm = ({workout, setView, addSet, removeSet, removeExercise, handleWeightChange, handleRepChange, cancelWorkout, save }) => {
+const WorkoutForm = ({workout, handleExerciseView, addSet, removeSet, removeExercise, handleWeightChange, handleRepChange, cancelWorkout, save }) => {
 
     const inputOnInput = (e) => {
         if (e.target.value.length > 7) {
@@ -32,8 +32,8 @@ const WorkoutForm = ({workout, setView, addSet, removeSet, removeExercise, handl
                                 ex.sets.map((set, index) => (
                                     <div key={set._id} className='flex items-center justify-between border-t-[1px] p-2 border-[#0B0B0D]'>
                                         <span className='w-4 text-lg'>{index + 1}</span>
-                                        <label className='text-[#BCBDC2] text-sm'><input type='number' value={set.weight} onChange={(e) => handleWeightChange(e, ex._id, set._id)} onInput={(e) => inputOnInput(e)} onClick={(e) => inputOnClick(e)} className='w-[60px] bg-[#232839] text-white text-lg caret-[#E47D74] outline-none text-right selection:bg-[#E47D74]' /> lbs</label>
-                                        <label className='text-[#BCBDC2] text-sm'><input type='number' value={set.reps} onChange={(e) => handleRepChange(e, ex._id, set._id)} onInput={(e) => inputOnInput(e)} onClick={(e) => inputOnClick(e)} className='w-[60px] bg-[#232839] text-white text-lg caret-[#E47D74] outline-none text-right selection:bg-[#E47D74]' /> reps</label>
+                                        <label className='text-[#BCBDC2] text-sm'><input type='number' value={set.weight} onChange={(e) => handleWeightChange(e, ex._id, set._id)} onInput={(e) => inputOnInput(e)} onClick={(e) => inputOnClick(e)} className='w-[70px] bg-[#232839] text-white text-lg caret-[#E47D74] outline-none text-right selection:bg-[#E47D74]' /> lbs</label>
+                                        <label className='text-[#BCBDC2] text-sm'><input type='number' value={set.reps} onChange={(e) => handleRepChange(e, ex._id, set._id)} onInput={(e) => inputOnInput(e)} onClick={(e) => inputOnClick(e)} className='w-[70px] bg-[#232839] text-white text-lg caret-[#E47D74] outline-none text-right selection:bg-[#E47D74]' /> reps</label>
                                         <FaTrash className='text-[#E47D74]' onClick={() => removeSet(ex._id, set._id)}/>
                                     </div>
                                 ))
@@ -44,7 +44,7 @@ const WorkoutForm = ({workout, setView, addSet, removeSet, removeExercise, handl
                 }
             </main>
             <footer className='m-2'>
-                <button type='button' className='w-full flex items-center justify-center gap-2 bg-[#E47D74] rounded-lg h-9' onClick={() => setView()}><FaPlus /> Exercise</button>         
+                <button type='button' className='w-full flex items-center justify-center gap-2 bg-[#E47D74] rounded-lg h-9' onClick={() => handleExerciseView()}><FaPlus /> Exercise</button>         
             </footer>
            
         </form>

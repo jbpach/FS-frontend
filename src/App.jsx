@@ -1,16 +1,16 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
-import LoggedWorkouts from "./pages/LoggedWorkouts";
 import NewWorkout from "./pages/NewWorkout";
+import Log from "./pages/Log";
+import Workout from "./pages/Workout";
 
 const App = () => {
-    console.log("Hello from App")
     return (
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/new/:id" element={<NewWorkout />} />
-            <Route path="/log" element={<LoggedWorkouts />} />
-            {/* <Route path="/log/:id" element={< />} /> */}
+            <Route path="/log" element={<Log />} />
+            <Route path="/log/:id" element={< Workout/>} />
         </Routes>
     )
 }

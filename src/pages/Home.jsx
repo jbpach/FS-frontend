@@ -8,9 +8,9 @@ const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const id = localStorage.getItem("id")
-        if (id) {
-            navigate(`/new/${id}`)
+        const new_workout = JSON.parse(localStorage.getItem("new_workout"))
+        if (new_workout) {
+            navigate(`/new/${new_workout._id}`)
         }
     })
 
@@ -19,7 +19,7 @@ const Home = () => {
             "title": "New workout"
         }
         const response = await workoutService.createWorkout(workoutObject)
-        localStorage.setItem("id", response._id)
+        localStorage.setItem("new_workout", JSON.stringify(response))
         navigate(`/new/${response._id}`)
     }
 

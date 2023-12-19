@@ -6,6 +6,11 @@ const getWorkouts = async () => {
     return response.data;
 }
 
+const getWorkout = async (id) => {
+    const response = await axios.get(`${baseUrl}/${id}`)
+    return response.data
+}
+
 const createWorkout = async (newWorkout) => {
     const response = await axios.post(baseUrl, newWorkout)
     return response.data
@@ -40,6 +45,7 @@ const Save = async (id, object) => {
 
 export default {
     getWorkouts, 
+    getWorkout,
     createWorkout, 
     addExercise, 
     addSet, 

@@ -3,7 +3,6 @@ import workoutService from "../services/workout";
 import WorkoutForm from "../components/WorkoutForm";
 import ExerciseView from "../components/ExerciseView"
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 
 const NewWorkout = () => {
     const navigate = useNavigate();
@@ -12,11 +11,10 @@ const NewWorkout = () => {
     const [viewExercises, setViewExercises] = useState(false)
 
     useEffect(() => {
-        const createWorkout = async () => {
-            const response = await axios.get(`/api/workout/${id}`)
-            setNewWorkout(response.data)
+        const new_workout = JSON.parse(localStorage.getItem("new_workout"))
+        if (new_workout) {
+            setNewWorkout(new_workout)
         }
-        createWorkout()
     }, [])
 
     const handleExerciseView = () => {
@@ -32,6 +30,7 @@ const NewWorkout = () => {
 
         currWorkout.exercises = currWorkout.exercises.concat(response)
         setNewWorkout(currWorkout)
+        localStorage.setItem("new_workout", JSON.stringify(currWorkout))
         setViewExercises(false)
     }
 
@@ -43,6 +42,7 @@ const NewWorkout = () => {
         let currWorkout = { ...newWorkout }
         currWorkout.exercises = currWorkout.exercises.filter(ex => ex._id != exerciseid)
         setNewWorkout(currWorkout)
+        localStorage.setItem("new_workout", JSON.stringify(currWorkout))
     }
 
     const addSet = async (exerciseid) => {
@@ -54,6 +54,7 @@ const NewWorkout = () => {
         let currExercise = currWorkout.exercises.find(ex => ex._id == exerciseid)
         currExercise.sets = currExercise.sets.concat(response)
         setNewWorkout(currWorkout)
+        localStorage.setItem("new_workout", JSON.stringify(currWorkout))
     }
 
     const removeSet = async (exerciseid, setid) => {
@@ -66,6 +67,7 @@ const NewWorkout = () => {
         let currExercise = currWorkout.exercises.find(ex => ex._id == exerciseid)
         currExercise.sets = currExercise.sets.filter(s => s._id != setid)
         setNewWorkout(currWorkout)
+        localStorage.setItem("new_workout", JSON.stringify(currWorkout))
     }
 
     const handleWeightChange = (e, parentId, childId) => {
@@ -73,6 +75,7 @@ const NewWorkout = () => {
         let currExercise = currWorkout.exercises.find(ex => ex._id == parentId)
         currExercise.sets = currExercise.sets.map(s => s._id == childId ? { ...s, weight: e.target.value } : s)
         setNewWorkout(currWorkout)
+        localStorage.setItem("new_workout", JSON.stringify(currWorkout))
     }
 
     const handleRepChange = (e, parentId, childId) => {
@@ -80,6 +83,7 @@ const NewWorkout = () => {
         let currExercise = currWorkout.exercises.find(ex => ex._id == parentId)
         currExercise.sets = currExercise.sets.map(s => s._id == childId ? { ...s, reps: e.target.value } : s)
         setNewWorkout(currWorkout)
+        localStorage.setItem("new_workout", JSON.stringify(currWorkout))
     }
 
     const cancelWorkout = async () => {

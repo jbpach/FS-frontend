@@ -1,11 +1,19 @@
+import { useNavigate } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa6";
 
-const WorkoutCard = ({ workout, editWorkout }) => {
+const WorkoutCard = ({ workout }) => {
+    const navigate = useNavigate();
+
+    const handleOnClick = () => {
+        navigate(`/log/${workout._id}`)
+    } 
+
     const exercises = workout.exercises.map(ex => ex.title).join(', ')
     const date = new Date(workout.createdAt).toLocaleDateString()
     return (
-        <div className="w-full h-auto bg-[#222739] rounded-lg border-l-8 border-l-white p-2 flex flex-nowrap items-center justify-between"
-            onClick={() => editWorkout(workout)}
+        <div
+            onClick={() => handleOnClick()} 
+            className="w-full h-auto bg-[#222739] rounded-lg border-l-8 border-l-white p-2 flex flex-nowrap items-center justify-between"
         >
             <div className="text-white">
                 <p className="font-semibold leading-none mb-2">{date}</p>

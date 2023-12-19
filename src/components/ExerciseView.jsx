@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { FaMagnifyingGlass, FaXmark, FaAngleDown, FaAngleUp, FaAngleLeft, FaDumbbell  } from "react-icons/fa6";
 
-const ExerciseView = ({ setExerciseString, setView, addExercise }) => {
+const ExerciseView = ({ handleExerciseView, addExercise }) => {
     const [exercises, setExercises] = useState([])
     const [show, setShow] = useState([])
     const [searchValue, setSearchValue] = useState('')
@@ -61,12 +61,12 @@ const ExerciseView = ({ setExerciseString, setView, addExercise }) => {
             </div>
         ))
     )
-
+    
     return (
         <>
             <header className='fixed top-0 w-full p-2 bg-[#0B0B0D]'>
                 <nav className='flex items-center justify-between gap-2'>
-                    <button className='w-9 h-9 bg-[#232839] flex items-center justify-center rounded-lg'><FaAngleLeft onClick={() => setView()}/></button>
+                    <button className='w-9 h-9 bg-[#232839] flex items-center justify-center rounded-lg' onClick={() => handleExerciseView()}><FaAngleLeft /></button>
                     <div className='relative flex items-center w-full'>
                         <FaMagnifyingGlass className='absolute ml-3 pointer-events-none' />
                         <input value={searchValue} onChange={(e) => handleSearchInput(e)} className='w-full h-9 px-10 rounded-lg bg-[#232839] text-white outline-none'/>
