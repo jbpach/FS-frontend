@@ -43,6 +43,16 @@ const Save = async (id, object) => {
     return response.data
 }
 
+const getWorkoutFacts = async (id) => {
+    const response = await axios.get(`${baseUrl}/facts/${id}`)
+    return response.data
+}
+
+const trainAgain = async (id) => {
+    const response = await axios.post(`${baseUrl}/again/${id}`)
+    return response.data
+}
+
 export default {
     getWorkouts, 
     getWorkout,
@@ -52,5 +62,7 @@ export default {
     removeSet, 
     removeExercise, 
     cancelWorkout,
-    Save
+    Save, 
+    getWorkoutFacts, 
+    trainAgain
 }

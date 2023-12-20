@@ -12,12 +12,8 @@ const Workout = () => {
 
     useEffect(() => {
         const fetchWorkout = async () => {
-            // const response = await workoutService.getWorkout(id)
-            // setWorkout(response)
-
-            const response = await axios.get(`http://localhost:3001/api/workout/facts/${id}`)
-            console.log(response.data)
-            setdata(response.data)
+            const response = await workoutService.getWorkoutFacts(id)
+            setdata(response)
         }
         fetchWorkout()
     }, [])
@@ -26,6 +22,16 @@ const Workout = () => {
         navigate('/log')
     }
 
+    const deleteLoggedWorkout = async () => {
+        await workoutService.cancelWorkout(id)
+        navigate('/log')
+    }
+
+    const trainAgain = async () => {
+        const response = await workoutService.trainAgain(id)
+        localStorage.setItem("new_workout", JSON.stringify(response))
+        navigate(`/new/${response._id}`)
+    }
 
     return (
         data && 
@@ -33,7 +39,7 @@ const Workout = () => {
                 <header className='fixed top-0 w-full p-2 bg-[#0B0B0D]'>
                     <nav className='flex items-center justify-between gap-2'>
                         <button className='w-9 h-9 bg-[#232839] flex items-center justify-center rounded-lg' onClick={() => backToLog()} ><FaArrowLeft /></button>
-                        <button className='w-9 h-9 bg-[#232839] flex items-center justify-center rounded-lg' ><FaTrash className='text-[#E47D74]'/></button>
+                        <button className='w-9 h-9 bg-[#232839] flex items-center justify-center rounded-lg' onClick={() => deleteLoggedWorkout()}><FaTrash className='text-[#E47D74]'/></button>
                     </nav>  
                 </header>
                 <main className="mt-14 m-2 flex flex-col gap-4">
@@ -44,7 +50,7 @@ const Workout = () => {
                             <p>{new Date(data.workout.createdAt).toLocaleDateString()} {new Date(data.workout.createdAt).toLocaleTimeString()} - {new Date(data.workout.updatedAt).toLocaleTimeString()}</p>
                         </div>
                     </div>
-                    <button className="border-[1px] rounded-lg p-3 text-[#E37C73]">Train again</button>
+                    <button className="border-[1px] rounded-lg h-9 text-lg text-[#E37C73]" onClick={() => trainAgain()}>Train again</button>
                     <div className="bg-[#232839] rounded-lg p-2 grid grid-cols-3 gap-2">
                         <div className="flex flex-col items-center">
                             <p className="text-sm">Total Sets</p>
@@ -64,13 +70,12 @@ const Workout = () => {
                         </div>
                         <div className="flex flex-col items-center">
                             <p className="text-sm">Average weight</p>
-                            <p className="text-md font-semibold">{data.totalWeight / data.totalSets} <span className="text-sm font-normal">lbs</span></p>
+                            <p className="text-md font-semibold">{ Math.round((data.totalWeight / data.totalSets) * 100) /100 } <span className="text-sm font-normal">lbs</span></p>
                         </div>
                         <div className="flex flex-col items-center">
                             <p className="text-sm">Heaviest</p>
                             <p className="text-md font-semibold">{data.heaviestWeight} <span className="text-sm font-normal">lbs</span></p>
                         </div>
-                    
                     </div>
                     {data.workout.exercises.map(ex => (
                         <div key={ex._id} className='flex flex-col bg-[#232839] rounded-lg'>

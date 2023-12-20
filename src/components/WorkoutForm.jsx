@@ -32,8 +32,14 @@ const WorkoutForm = ({workout, handleExerciseView, addSet, removeSet, removeExer
                                 ex.sets.map((set, index) => (
                                     <div key={set._id} className='flex items-center justify-between border-t-[1px] p-2 border-[#0B0B0D]'>
                                         <span className='w-4 text-lg'>{index + 1}</span>
-                                        <label className='text-[#BCBDC2] text-sm'><input type='number' value={set.weight} onChange={(e) => handleWeightChange(e, ex._id, set._id)} onInput={(e) => inputOnInput(e)} onClick={(e) => inputOnClick(e)} className='w-[70px] bg-[#232839] text-white text-lg caret-[#E47D74] outline-none text-right selection:bg-[#E47D74]' /> lbs</label>
-                                        <label className='text-[#BCBDC2] text-sm'><input type='number' value={set.reps} onChange={(e) => handleRepChange(e, ex._id, set._id)} onInput={(e) => inputOnInput(e)} onClick={(e) => inputOnClick(e)} className='w-[70px] bg-[#232839] text-white text-lg caret-[#E47D74] outline-none text-right selection:bg-[#E47D74]' /> reps</label>
+                                        <div>   
+                                            <input id="weight" input type='number' value={set.weight} onChange={(e) => handleWeightChange(e, ex._id, set._id)} onInput={(e) => inputOnInput(e)} onClick={(e) => inputOnClick(e)} className='bg-[#232839] w-[70px] leading-none text-white text-lg caret-[#E47D74] outline-none text-right selection:bg-[#E47D74]'  />
+                                            <label htmlFor="weight">lbs</label>
+                                        </div>
+                                        <div>   
+                                            <input id="reps" input type='number' value={set.reps} onChange={(e) => handleRepChange(e, ex._id, set._id)} onInput={(e) => inputOnInput(e)} onClick={(e) => inputOnClick(e)} className='bg-[#232839] w-[70px] leading-none text-white text-lg caret-[#E47D74] outline-none text-right selection:bg-[#E47D74]'  />
+                                            <label htmlFor="reps">lbs</label>
+                                        </div>
                                         <FaTrash className='text-[#E47D74]' onClick={() => removeSet(ex._id, set._id)}/>
                                     </div>
                                 ))

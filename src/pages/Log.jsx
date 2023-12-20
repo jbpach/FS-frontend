@@ -28,7 +28,7 @@ const Log = () => {
                     <h1 className='font-semibold text-lg'>Choose workout to train again</h1>
                 </nav>  
             </header>
-            <main className="mt-12 p-2">
+            <main className="mt-12 p-2 flex flex-col gap-4">
                 {
                     workouts.map(workout => (
                         <WorkoutCard key={workout._id} workout={workout} />
